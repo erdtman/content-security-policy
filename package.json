@@ -1,0 +1,30 @@
+{
+  "name": "content-security-policy",
+  "description": "Middleware to add Content-Security-Policy header.",
+  "version": "0.1.1",
+  "author": {
+    "name": "Samuel Erdtman",
+    "email": "samuel@erdtman.se"},
+  "keywords": [
+    "express",
+    "content-security-policy",
+    "security",
+    "csp"],
+  "licenses": [{
+    "type": "MIT",
+    "url": "http://www.opensource.org/licenses/MIT"}],
+  "readmeFilename": "README.md"
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:samuelerdtman/content-security-policy.git"},
+  "bugs": {
+    "url": "https://github.com/samuelerdtman/content-security-policy/issues"},
+  "main": "./lib",
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "1.13.x"},
+  "scripts": {
+    "test": "mocha -u tdd"},
+  "engines": {
+    "node": ">= 0.4.0"},
+}
