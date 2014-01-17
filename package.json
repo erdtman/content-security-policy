@@ -1,12 +1,13 @@
 {
   "name": "content-security-policy",
   "description": "Middleware to add Content-Security-Policy header.",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "author": {
     "name": "Samuel Erdtman",
     "email": "samuel@erdtman.se"},
   "keywords": [
     "express",
+    "connect",
     "content-security-policy",
     "security",
     "csp"],

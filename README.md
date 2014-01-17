@@ -16,6 +16,7 @@ Middleware to add Content-Security-Policy header according to http://www.w3.org/
 
     var connect = require('connect');
     var csp = require('content-security-policy');
+    // Using the example starter policy that will allow most common requests to 'self'
     var server = connect.createServer(csp.getCSP(CSP.STARTER_OPTIONS));
     server.listen(3030);
     
@@ -42,4 +43,4 @@ Middleware to add Content-Security-Policy header according to http://www.w3.org/
       localCSP, // This will apply the local policy just to this page
       function(req, res) {
         res.render('settings');
-    });
+      });
