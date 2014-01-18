@@ -4,10 +4,13 @@ var CSP = require('../lib');
 suite('Content Security Policy(CSP) middleware', function() {
   function getRes(result) {
     return {
-      header : function(name, value) {
-        console.log("%s: %s", name, value);
+      setHeader : function(name, value) {
+        console.log("set %s: %s", name, value);
         result.name = name;
         result.value = value;
+      },
+      removeHeader : function(name) {
+        console.log("remove: %s", name);
       }
     };
   }

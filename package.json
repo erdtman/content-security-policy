@@ -14,7 +14,7 @@
   "licenses": [{
     "type": "MIT",
     "url": "http://www.opensource.org/licenses/MIT"}],
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
   "repository": {
     "type": "git",
     "url": "git@github.com:samuelerdtman/content-security-policy.git"},
@@ -27,5 +27,4 @@
   "scripts": {
     "test": "mocha -u tdd"},
   "engines": {
-    "node": ">= 0.4.0"},
-}
+    "node": ">= 0.4.0"}}
