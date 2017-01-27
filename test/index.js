@@ -13,8 +13,8 @@ suite('Content Security Policy(CSP) middleware', function() {
         console.log("remove: %s", name);
       }
     };
-  }
-  ;
+  };
+
   var next = function() {
   };
 
@@ -29,6 +29,10 @@ suite('Content Security Policy(CSP) middleware', function() {
     assert(result.value.indexOf("connect-src 'self'") > -1, "connect-src");
     assert(result.value.indexOf("img-src 'self'") > -1, "img-src");
     assert(result.value.indexOf("style-src 'self'") > -1, "style-src");
+    assert(result.value.indexOf("child-src 'self'") > -1, "child-src");
+    assert(result.value.indexOf("form-action 'self'") > -1, "form-action");
+    assert(result.value.indexOf("frame-ancestors 'self'") > -1, "frame-ancestors");
+    assert(result.value.indexOf("plugin-types 'none'") > -1, "plugin-types");
   });
 
   test('Report only', function() {
@@ -57,8 +61,13 @@ suite('Content Security Policy(CSP) middleware', function() {
       "media-src" : "123",
       "frame-src" : "456",
       "font-src" : "789",
-      "connect-src" : "abc"
+      "connect-src" : "abc",
+      "child-src" : "def",
+      "form-action" : "ghi",
+      "frame-ancestors" : [CSP.SRC_SELF, CSP.SRC_DATA],
+      "plugin-types" : CSP.SRC_NONE
     };
+
     var result = {};
     var cspFunction = CSP.getCSP(policy);
     cspFunction(null, getRes(result), next);
@@ -76,5 +85,9 @@ suite('Content Security Policy(CSP) middleware', function() {
     assert(result.value.indexOf("frame-src 456") > -1, "frame-src");
     assert(result.value.indexOf("font-src 789") > -1, "font-src");
     assert(result.value.indexOf("connect-src abc") > -1, "connect-src");
+    assert(result.value.indexOf("child-src def") > -1, "child-src");
+    assert(result.value.indexOf("form-action ghi") > -1, "form-action");
+    assert(result.value.indexOf("frame-ancestors 'self' data:") > -1, "frame-ancestors");
+    assert(result.value.indexOf("plugin-types 'none'") > -1, "plugin-types");
   });
 });
