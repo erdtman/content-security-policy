@@ -2,38 +2,38 @@
 Middleware to add Content-Security-Policy header according to http://www.w3.org/TR/CSP/
 
 ## Install
-
-    $ npm install content-security-policy
-
+```
+    $ npm install content-security-policy --save
+```
 ## Tests
-
+```
     $ npm install --dev
     $ npm test
-
+```
 ## Usage
 
 ### Connect
-
-    var connect = require('connect');
-    var csp = require('content-security-policy');
+```js
+    const connect = require('connect');
+    const csp = require('content-security-policy');
     // Using the example starter policy that will allow most common requests to 'self'
-    var server = connect.createServer(csp.getCSP(CSP.STARTER_OPTIONS));
+    const server = connect.createServer(csp.getCSP(CSP.STARTER_OPTIONS));
     server.listen(3030);
-    
+```
 ### Express
-
-    var csp = require('content-security-policy');
-    var express = require('express');
-    var app = express();
+```js
+    const csp = require('content-security-policy');
+    const express = require('express');
+    const app = express();
     
-    var cspPolicy = {
+    const cspPolicy = {
       "report-uri" : "/reporting",
       "default-src" : CSP.SRC_NONE,
       "script-src" : [ CSP.SRC_SELF ]
     };
     
-    var globalCSP = csp.getCSP(csp.STARTER_OPTIONS);
-    var localCSP = csp.getCSP(cspPolicy);
+    const globalCSP = csp.getCSP(csp.STARTER_OPTIONS);
+    const localCSP = csp.getCSP(cspPolicy);
     
     // Insert before 'app.router'
     app.use(globalCSP); // This will apply this policy to all requests
@@ -44,3 +44,4 @@ Middleware to add Content-Security-Policy header according to http://www.w3.org/
       function(req, res) {
         res.render('settings');
       });
+```
