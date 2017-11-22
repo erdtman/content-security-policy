@@ -27,13 +27,27 @@
   "bugs": {
     "url": "https://github.com/samuelerdtman/content-security-policy/issues"
   },
-  "main": "./lib",
+  "main": "lib/index.js",
   "dependencies": {},
   "devDependencies": {
-    "mocha": "1.13.x"
+    "ava": "*",
+    "live-server": "*",
+    "npm-run-all": "*",
+    "nyc": "*",
+    "semistandard": "*",
+    "watch": "*"
   },
   "scripts": {
-    "test": "mocha -u tdd"
+    "clean": "rm -rf coverage/ .nyc_output/",
+    "pretest": "semistandard",
+    "test": "ava test",
+    "coverage": "nyc npm test",
+    "coveragehtml": "nyc report -r html",
+    "precoveragehtml": "npm run coverage",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "live": "live-server -q --port=4003 --ignorePattern='(js|css|png)$' coverage",
+    "watch": "watch 'npm run coveragehtml' test lib",
+    "dev": "npm-run-all -p --silent watch live"
   },
   "engines": {
     "node": ">= 0.4.0"

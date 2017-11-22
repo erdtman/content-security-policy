@@ -1,18 +1,4 @@
-# content-security-policy
-Middleware to add Content-Security-Policy header according to http://www.w3.org/TR/CSP/
-
-## Install
-```
-    $ npm install content-security-policy --save
-```
-## Tests
-```
-    $ npm install --dev
-    $ npm test
-```
-## Usage
-```js
-const csp = require('content-security-policy');
+const csp = require('./');
 const express = require('express');
 const app = express();
 
@@ -40,5 +26,3 @@ app.get('/local', localCSP, (req, res) => {
 app.listen(3000, () => {
   console.log('Example app listening on port 3000!');
 });
-
-```
