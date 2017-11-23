@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/erdtman/content-security-policy.svg?branch=master)](https://travis-ci.org/erdtman/content-security-policy)
+[![Coverage Status](https://coveralls.io/repos/github/erdtman/content-security-policy/badge.svg?branch=master)](https://coveralls.io/github/erdtman/content-security-policy?branch=master)
 # content-security-policy
 Middleware to add Content-Security-Policy header according to http://www.w3.org/TR/CSP/
 
