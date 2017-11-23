@@ -1,7 +1,7 @@
 {
   "name": "content-security-policy",
   "description": "Middleware to add Content-Security-Policy header.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": {
     "name": "Samuel Erdtman",
     "email": "samuel@erdtman.se"
