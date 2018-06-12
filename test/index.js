@@ -64,6 +64,7 @@ test('All policies', t => {
     'connect-src': 'abc',
     'child-src': 'def',
     'form-action': 'ghi',
+    'worker-src': CSP.SRC_BLOB,
     'frame-ancestors': [CSP.SRC_SELF, CSP.SRC_DATA],
     'plugin-types': CSP.SRC_NONE
   };
@@ -87,6 +88,7 @@ test('All policies', t => {
   t.true(result.value.indexOf('connect-src abc') > -1, 'connect-src');
   t.true(result.value.indexOf('child-src def') > -1, 'child-src');
   t.true(result.value.indexOf('form-action ghi') > -1, 'form-action');
+  t.true(result.value.indexOf('worker-src blob:') > -1, 'worker-src');
   t.true(result.value.indexOf('frame-ancestors \'self\' data:') > -1, 'frame-ancestors');
   t.true(result.value.indexOf('plugin-types \'none\'') > -1, 'plugin-types');
 });
