@@ -5,7 +5,7 @@ const app = express();
 const cspPolicy = {
   'report-uri': '/reporting',
   'default-src': csp.SRC_NONE,
-  'script-src': [ csp.SRC_SELF, csp.SRC_DATA ]
+  'script-src': [csp.SRC_SELF, csp.SRC_DATA]
 };
 
 const globalCSP = csp.getCSP(csp.STARTER_OPTIONS);

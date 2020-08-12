@@ -39,8 +39,8 @@
   },
   "scripts": {
     "clean": "rm -rf coverage/ .nyc_output/",
-    "pretest": "semistandard",
-    "test": "ava test",
+    "pretest": "semistandard --fix",
+    "test": "ava test/*.js",
     "coverage": "nyc npm test",
     "coveragehtml": "nyc report -r html",
     "precoveragehtml": "npm run coverage",

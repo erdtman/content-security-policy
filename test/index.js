@@ -52,9 +52,9 @@ test('Report only', t => {
 test('All policies', t => {
   const policy = {
     'report-uri': '/reporting',
-    'sandbox': [ CSP.SANDBOX_ALLOW_FORMS ],
+    sandbox: [CSP.SANDBOX_ALLOW_FORMS],
     'default-src': CSP.SRC_NONE,
-    'script-src': [ CSP.SRC_SELF, CSP.SRC_USAFE_INLINE ],
+    'script-src': [CSP.SRC_SELF, CSP.SRC_USAFE_INLINE],
     'object-src': 'https://google.com',
     'style-src': 'http://tmp.com',
     'img-src': 'https://flikr.com',
