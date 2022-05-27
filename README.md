@@ -3,6 +3,8 @@
 # content-security-policy
 Middleware to add Content-Security-Policy header according to http://www.w3.org/TR/CSP/
 
+hello
+
 ## Install
 ```
     $ npm install content-security-policy --save
