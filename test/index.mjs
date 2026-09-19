@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 import test from 'ava';
 import CSP from '../lib/index.js';
 
@@ -196,4 +198,17 @@ test('Values that are neither string, array nor true are ignored', t => {
   })(null, getRes(result), next);
 
   t.is(result.value, 'default-src \'self\'');
+});
+
+test('Type declarations match the runtime exports', t => {
+  const declarations = readFileSync(new URL('../lib/index.d.ts', import.meta.url), 'utf8');
+
+  const declared = new Set(
+    [...declarations.matchAll(/^export (?:declare )?(?:const|function) (\w+)/gm)].map(m => m[1])
+  );
+  t.deepEqual([...declared].sort(), Object.keys(CSP).sort(), 'exported names');
+
+  for (const [, name, value] of declarations.matchAll(/^export const (\w+): "((?:[^"\\]|\\.)*)";/gm)) {
+    t.is(CSP[name], value.replace(/\\(.)/g, '$1'), name);
+  }
 });
