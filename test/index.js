@@ -13,7 +13,7 @@ function getRes (result) {
       result.name = name;
       result.value = value;
     },
-    removeHeader: name => {}
+    removeHeader: () => {}
   };
 }
 

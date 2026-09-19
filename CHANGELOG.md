@@ -49,8 +49,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Travis CI configuration, replaced by GitHub Actions.
-- The ava and c8 development dependencies; tests now use the built-in
-  `node:test` runner and its built-in coverage.
+- The ava, c8 and neostandard development dependencies. Tests use the built-in
+  `node:test` runner and its built-in coverage, and linting is eslint with its
+  own recommended rules plus @stylistic. The install tree went from 337
+  packages to 84.
 - The Eclipse `.project` descriptor.
 - `.npmignore`, replaced by an explicit `files` allowlist. The published
   tarball is now `lib/`, `README.md`, `LICENSE` and `package.json`.
