@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   plus the remaining sandbox tokens.
 - `DIRECTIVES`, the known directive names in emission order.
 - Bundled TypeScript declarations (`lib/index.d.ts`).
+- Releases are published from GitHub Actions with npm provenance attestations,
+  so a published tarball can be traced to the commit and workflow run that
+  built it. Verify with `npm audit signatures`.
 
 ### Changed
 

@@ -141,6 +141,13 @@ npm run coverage  # tests with a coverage report (100% thresholds)
 npm run watch     # re-run tests on change
 ```
 
+## Releases
+
+Published from GitHub Actions with
+[npm provenance](https://docs.npmjs.com/generating-provenance-statements), so
+each release can be traced back to the commit and workflow run that built it.
+Verify with `npm audit signatures`. See [RELEASING.md](RELEASING.md).
+
 ## License
 
 MIT
