@@ -28,9 +28,8 @@
     "lib/"
   ],
   "publishConfig": {
-    "access": "public",
-    "provenance": true,
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -46,7 +45,8 @@
     "pretest": "npm run lint && npm run lint:types",
     "test": "node --test \"test/*.js\"",
     "watch": "node --test --watch \"test/*.js\"",
-    "coverage": "node --test --experimental-test-coverage --test-coverage-exclude=\"test/**\" --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 \"test/*.js\""
+    "coverage": "node --test --experimental-test-coverage --test-coverage-exclude=\"test/**\" --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 \"test/*.js\"",
+    "prepublishOnly": "npm run lint && npm run lint:types && npm test"
   },
   "engines": {
     "node": ">=18"
