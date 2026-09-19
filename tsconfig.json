@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "es2022",
+    "module": "node16",
+    "moduleResolution": "node16",
+    "esModuleInterop": true,
+    "allowJs": false,
+    "skipLibCheck": false
+  },
+  "include": ["lib/index.d.ts", "test/types"]
+}
