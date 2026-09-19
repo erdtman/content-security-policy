@@ -1,4 +1,4 @@
-const csp = require('./');
+const csp = require('..');
 const express = require('express');
 const app = express();
 
@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
   res.send('Using global content security policy!');
 });
 
-// This will apply the local policy just to this path, overriding the globla policy
+// This will apply the local policy just to this path, overriding the global policy
 app.get('/local', localCSP, (req, res) => {
   res.send('Using path local content security policy!');
 });
