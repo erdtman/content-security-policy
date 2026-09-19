@@ -1,0 +1,60 @@
+name: Release
+
+# Publishing is tied to a GitHub Release so there is a human gate: create a
+# release for tag vX.Y.Z and this workflow publishes that version to npm.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/content-security-policy
+    permissions:
+      # Required for npm provenance: lets the job request the short-lived OIDC
+      # token that npm exchanges for publish rights and that Sigstore binds the
+      # provenance attestation to. No long-lived npm token is stored.
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+
+      # Trusted publishing needs npm >= 11.5.1. The version bundled with the
+      # Node release above may be older, so pin the CLI explicitly.
+      - name: Use an npm that supports trusted publishing
+        run: npm install -g npm@latest
+
+      - run: npm ci
+
+      # The package is published from this tree, so verify it here rather than
+      # trusting that the CI run on the branch is still representative.
+      - run: npm run lint
+      - run: npm run lint:types
+      - run: npm run coverage
+
+      - name: Check the tag matches package.json
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          manifest="$(node -p 'require("./package.json").version')"
+          if [ "$tag" != "$manifest" ]; then
+            echo "Release tag $GITHUB_REF_NAME does not match package.json version $manifest" >&2
+            exit 1
+          fi
+          echo "Publishing version $manifest"
+
+      - name: Show what will be published
+        run: npm pack --dry-run
+
+      # access and provenance come from publishConfig in package.json.
+      - run: npm publish
