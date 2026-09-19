@@ -13,43 +13,38 @@
     "security",
     "csp"
   ],
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://www.opensource.org/licenses/MIT"
-    }
-  ],
-  "readmeFilename": "README.md",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:samuelerdtman/content-security-policy.git"
+    "url": "git+https://github.com/erdtman/content-security-policy.git"
   },
   "bugs": {
-    "url": "https://github.com/samuelerdtman/content-security-policy/issues"
+    "url": "https://github.com/erdtman/content-security-policy/issues"
   },
+  "homepage": "https://github.com/erdtman/content-security-policy#readme",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/"
+  ],
   "dependencies": {},
   "devDependencies": {
-    "ava": "*",
-    "live-server": "*",
-    "npm-run-all": "*",
-    "nyc": "*",
-    "semistandard": "*",
-    "watch": "*"
+    "ava": "^8.0.1",
+    "c8": "^12.0.0",
+    "eslint": "^9.39.5",
+    "neostandard": "^0.13.0"
   },
   "scripts": {
-    "clean": "rm -rf coverage/ .nyc_output/",
-    "pretest": "semistandard --fix",
-    "test": "ava test/*.js",
-    "coverage": "nyc npm test",
-    "coveragehtml": "nyc report -r html",
-    "precoveragehtml": "npm run coverage",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "live": "live-server -q --port=4003 --ignorePattern='(js|css|png)$' coverage",
-    "watch": "watch 'npm run coveragehtml' test lib",
-    "dev": "npm-run-all -p --silent watch live"
+    "clean": "rm -rf coverage/",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "pretest": "npm run lint",
+    "test": "ava",
+    "watch": "ava --watch",
+    "coverage": "c8 ava",
+    "coverage:html": "c8 --reporter=html ava"
   },
   "engines": {
-    "node": ">= 0.4.0"
+    "node": ">=18"
   }
 }
