@@ -28,8 +28,6 @@
     "lib/"
   ],
   "devDependencies": {
-    "ava": "^8.0.1",
-    "c8": "^12.0.0",
     "eslint": "^9.39.5",
     "neostandard": "^0.13.0",
     "typescript": "^6.0.3"
@@ -40,10 +38,9 @@
     "lint:fix": "eslint --fix",
     "lint:types": "tsc --noEmit",
     "pretest": "npm run lint && npm run lint:types",
-    "test": "ava",
-    "watch": "ava --watch",
-    "coverage": "c8 ava",
-    "coverage:html": "c8 --reporter=html ava"
+    "test": "node --test \"test/*.js\"",
+    "watch": "node --test --watch \"test/*.js\"",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-exclude=\"test/**\" --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 \"test/*.js\""
   },
   "engines": {
     "node": ">=18"

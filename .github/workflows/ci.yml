@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: ['22', '24', '26']
+        node-version: ['20', '22', '24', '26']
     name: Node ${{ matrix.node-version }}
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +27,19 @@ jobs:
       - run: npm run lint
       - run: npm run lint:types
       - run: npm run coverage
+
+  # The test suite uses only node:test, so it runs with no dependencies
+  # installed. That lets us check the floor declared in `engines`, which is
+  # below what the lint and typecheck toolchain itself supports.
+  engines-floor:
+    runs-on: ubuntu-latest
+    name: Node 18 (no dev dependencies)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - run: node --test test/index.js
 
   audit:
     runs-on: ubuntu-latest

@@ -129,12 +129,15 @@ app.use(getCSP(policy));
 
 Node.js 18 or newer. The package is CommonJS and has no runtime dependencies.
 
+The test suite uses only `node:test`, so `node --test test/index.js` runs it with
+nothing installed.
+
 ## Development
 
 ```sh
 npm install
 npm test          # lint, typecheck and run the tests
-npm run coverage  # tests with a coverage report
+npm run coverage  # tests with a coverage report (100% thresholds)
 npm run watch     # re-run tests on change
 ```
 
