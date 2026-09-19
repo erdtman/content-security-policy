@@ -1,7 +1,5 @@
-'use strict';
-
-const test = require('ava');
-const CSP = require('../');
+import test from 'ava';
+import CSP from '../lib/index.js';
 
 function getRes (result) {
   return {
