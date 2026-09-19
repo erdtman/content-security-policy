@@ -143,7 +143,7 @@ npm run watch     # re-run tests on change
 
 ## Releases
 
-Published from GitHub Actions with
+Staged from GitHub Actions on a `v*` tag push, with
 [npm provenance](https://docs.npmjs.com/generating-provenance-statements), so
 each release can be traced back to the commit and workflow run that built it.
 Verify with `npm audit signatures`. See [RELEASING.md](RELEASING.md).

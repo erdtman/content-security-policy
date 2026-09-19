@@ -1,7 +1,7 @@
 # Releasing
 
-Releases are published to npm by `.github/workflows/release.yml`, which runs
-when a GitHub Release is published. Every published version carries a
+Releases are published to npm by `.github/workflows/publish.yml`, which runs
+on a `v*` tag push. Every published version carries a
 [provenance attestation](https://docs.npmjs.com/generating-provenance-statements)
 linking the tarball back to the commit and workflow run that produced it.
 
@@ -22,26 +22,17 @@ done from this repository.
    | --- | --- |
    | Organization or user | `erdtman` |
    | Repository | `content-security-policy` |
-   | Workflow filename | `release.yml` |
-   | Environment | `npm` |
+   | Workflow filename | `publish.yml` |
+   | Environment | leave blank |
 
-The environment name must match the `environment:` block in the release
-workflow. Leave it blank there if you do not want to use one, but an
-environment lets you add required reviewers, so a publish needs a second pair
-of eyes.
+Leave the environment blank, matching the canonicalize setup. If you ever fill
+it in, the workflow needs a matching `environment:` block, because npm checks
+that claim against the OIDC token. A human gate is not a reason to add one
+here: staging already provides it.
 
-If you would rather use a token than trusted publishing, create a granular
-access token scoped to this package, store it as the `NPM_TOKEN` repository
-secret, and add to the publish step:
-
-```yaml
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-```
-
-Provenance still works that way; trusted publishing is preferred only because
-there is no long-lived credential to leak or rotate.
+Do not set `NODE_AUTH_TOKEN` or any other npm credential in the job. A token in
+the environment suppresses the OIDC exchange, and the publish then fails with
+ENEEDAUTH.
 
 ## Why the registry is pinned in the manifest
 
@@ -63,16 +54,18 @@ git switch master && git pull
 # 3. Bump the version and create the tag. Use minor/major as appropriate.
 npm version minor
 
-# 4. Push the commit and the tag.
+# 4. Push the commit and the tag. The tag push starts the workflow.
 git push --follow-tags
 ```
 
-Then create a GitHub Release for the new tag, using the changelog section as
-the body. Publishing the release starts the workflow.
+The workflow stages the release rather than publishing it: it uploads the
+tarball and signs provenance, but the version does not appear on the registry
+until it is promoted. Promote it with `npm stage approve <stage-id>` or from
+the package page on npmjs.com. So a tag push alone cannot ship a version.
 
-The workflow will refuse to publish if the release tag does not match the
-version in `package.json`, so a mistyped tag fails loudly instead of shipping
-the wrong version.
+The workflow refuses to stage anything if the tag does not match the version in
+`package.json`, so a mistyped tag fails loudly instead of shipping the wrong
+version.
 
 ## Verifying a published release
 
