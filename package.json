@@ -45,6 +45,7 @@
     "test": "node --test \"test/*.js\"",
     "watch": "node --test --watch \"test/*.js\"",
     "coverage": "node --test --experimental-test-coverage --test-coverage-exclude=\"test/**\" --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 \"test/*.js\"",
+    "mutation": "npx --yes -p @stryker-mutator/core@9 -p typescript@5 stryker run",
     "prepublishOnly": "npm run lint && npm run lint:types && npm test"
   },
   "engines": {

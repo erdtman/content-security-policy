@@ -1,0 +1,15 @@
+{
+  "testRunner": "command",
+  "commandRunner": {
+    "command": "node --test test/index.js test/exports.js test/http.js test/invariants.js test/docs.js"
+  },
+  "mutate": ["lib/index.js"],
+  "coverageAnalysis": "off",
+  "reporters": ["clear-text", "progress"],
+  "thresholds": {
+    "high": 100,
+    "low": 100,
+    "break": 100
+  },
+  "tempDirName": ".stryker-tmp"
+}

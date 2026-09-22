@@ -4,3 +4,6 @@
 node_modules/
 npm-debug.log
 coverage/
+# Mutation testing
+.stryker-tmp/
+reports/
