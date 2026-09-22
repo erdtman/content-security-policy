@@ -26,7 +26,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run lint:types
+      # The --test-coverage-* threshold flags only exist on Node 22 and later.
       - run: npm run coverage
+        if: matrix.node-version != '20'
+      - run: node --test "test/*.js"
+        if: matrix.node-version == '20'
 
   # The test suite uses only node:test, so it runs with no dependencies
   # installed. That lets us check the floor declared in `engines`, which is
