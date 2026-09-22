@@ -5,6 +5,51 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Directive names and values are validated against the CSP grammar when the
+  policy is compiled. A name may contain only ASCII letters, digits and `-`; a
+  value may not contain control characters, `;`, `,` or non-ASCII characters.
+  A malformed policy now throws a `TypeError` from `getCSP`, at startup,
+  instead of producing a broken header on every request. A directive toggled
+  off with a falsy value is not validated, so switching one off cannot throw.
+- `getCSP` rejects options that are not a policy object.
+
+### Changed
+
+- `STARTER_OPTIONS` is frozen. It is shared by every consumer in the process,
+  so mutating it changed the baseline for all of them. Spread it to derive a
+  policy. Its declared type is now `Readonly<Policy>`.
+
+### Fixed
+
+- Directive values were read through the prototype chain, so a polluted
+  `Object.prototype` could add directives to, or loosen, every compiled policy,
+  and could flip a policy to report-only. Only a policy's own properties are
+  read now.
+- A value containing CR or LF was accepted and then rejected by Node with
+  `ERR_INVALID_CHAR` inside `res.setHeader`, turning every request into a 500.
+  It is rejected when the policy is built instead.
+- An error message described an array policy by its contents rather than as an
+  array.
+
+### Tests
+
+- The suite is layered into compilation and validation tests, real
+  `http.ServerResponse` integration tests, generated-policy invariant tests,
+  export and declaration tests, documentation drift tests, and tests of the
+  packed tarball. It still has no test dependencies.
+- Header assertions compare the whole header string. They previously used
+  substring matches, which still passed when a directive was widened.
+- `next()` is asserted, the ordering table is generated from `DIRECTIVES`, and
+  the type declarations are checked with `@ts-expect-error` so that invalid
+  usage failing to fail is a build error.
+- Suite strength is measured by mutation testing (`npm run mutation`), held at
+  a 100% score and run weekly in CI. Stryker is fetched on demand rather than
+  added as a dependency.
+
 ## [0.4.0] - 2026-09-22
 
 ### Added
