@@ -4,7 +4,7 @@ const js = require('@eslint/js');
 
 module.exports = [
   {
-    ignores: ['coverage/']
+    ignores: ['coverage/', '.stryker-tmp/', 'reports/']
   },
   js.configs.recommended,
   {
@@ -16,6 +16,17 @@ module.exports = [
         require: 'readonly',
         __dirname: 'readonly',
         console: 'readonly'
+      }
+    }
+  },
+  {
+    // The tests reach for runtime globals the library itself never touches.
+    files: ['test/**/*.js'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        fetch: 'readonly',
+        structuredClone: 'readonly'
       }
     }
   }
