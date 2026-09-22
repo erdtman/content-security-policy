@@ -1,0 +1,31 @@
+name: Mutation
+
+# Coverage is saturated on a module this small, so it cannot tell a strong
+# test from a weak one. Mutation testing can: it changes the library and
+# expects the suite to notice. Run weekly and on demand rather than on every
+# push, since it is the slowest check by far.
+
+on:
+  schedule:
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stryker:
+    runs-on: ubuntu-latest
+    name: Stryker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      # Stryker is not a dependency of this package: it is fetched on demand so
+      # the install tree stays at the handful of packages linting needs.
+      # typescript is provisioned alongside it because Stryker's sandbox
+      # preprocessor loads it to rewrite tsconfig.json.
+      - run: npm run mutation
