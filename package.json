@@ -33,7 +33,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@stylistic/eslint-plugin": "^5.10.0",
     "eslint": "^10.10.0",
     "typescript": "^6.0.3"
   },
