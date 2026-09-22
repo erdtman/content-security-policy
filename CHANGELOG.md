@@ -5,7 +5,7 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.0] - 2026-09-22
 
 ### Added
 
@@ -57,8 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Travis CI configuration, replaced by GitHub Actions.
 - The ava, c8 and neostandard development dependencies. Tests use the built-in
   `node:test` runner and its built-in coverage, and linting is eslint with its
-  own recommended rules plus @stylistic. The install tree went from 337
-  packages to 84.
+  own recommended rules. Formatting is not linted: those rules are taste rather
+  than correctness. The install tree went from 337 packages to 79.
 - The Eclipse `.project` descriptor.
 - `.npmignore`, replaced by an explicit `files` allowlist. The published
   tarball is now `lib/`, `README.md`, `LICENSE` and `package.json`.
@@ -67,5 +67,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See the [commit history](https://github.com/erdtman/content-security-policy/commits/master).
 
-[Unreleased]: https://github.com/erdtman/content-security-policy/compare/v0.3.4...HEAD
+[Unreleased]: https://github.com/erdtman/content-security-policy/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/erdtman/content-security-policy/compare/v0.3.4...v0.4.0
 [0.3.4]: https://github.com/erdtman/content-security-policy/releases/tag/v0.3.4
