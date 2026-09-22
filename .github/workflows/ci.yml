@@ -26,10 +26,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run lint:types
-      # The --test-coverage-* threshold flags only exist on Node 22 and later.
+      # Node 20 has neither the --test-coverage-* threshold flags nor glob
+      # expansion for test paths; both arrived in Node 22.
       - run: npm run coverage
         if: matrix.node-version != '20'
-      - run: node --test "test/*.js"
+      - run: node --test test/index.js
         if: matrix.node-version == '20'
 
   # The test suite uses only node:test, so it runs with no dependencies
