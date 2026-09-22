@@ -127,7 +127,7 @@ app.use(getCSP(policy));
 
 ## Requirements
 
-Node.js 18 or newer. The package is CommonJS and has no runtime dependencies.
+Node.js 22 or newer. The package is CommonJS and has no runtime dependencies.
 
 The test suite uses only `node:test`, so `node --test test/index.js` runs it with
 nothing installed.
