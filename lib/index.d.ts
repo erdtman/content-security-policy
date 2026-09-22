@@ -76,7 +76,13 @@ export type CSPMiddleware = (
 /**
  * Build middleware that sets a Content-Security-Policy header.
  *
+ * The policy is compiled once, when the middleware is created. Directive names
+ * and values are validated against the CSP grammar at that point, so a
+ * malformed policy throws here rather than on every request.
+ *
  * @param options the policy
+ * @throws TypeError if options is not a policy object, or if a directive name
+ *   or value is not valid per the CSP grammar
  */
 export function getCSP (options?: Policy): CSPMiddleware;
 
@@ -133,5 +139,7 @@ export const TRUSTED_TYPES_FOR_SCRIPT: "'script'";
  * A reasonable modern baseline: denies everything by default and allows
  * scripts, styles, images, fonts, connections and form posts from the same
  * origin only.
+ *
+ * Frozen at runtime: spread it to derive a policy rather than mutating it.
  */
-export const STARTER_OPTIONS: Policy;
+export const STARTER_OPTIONS: Readonly<Policy>;
