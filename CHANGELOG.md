@@ -35,8 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   trailing `';'`, and array values left a stray space before it
   (`script-src 'self' data: ;`). The policy is semantically unchanged.
 - `getCSP()` tolerates being called with no policy.
-- `engines` now says Node.js >=18. It previously claimed >=0.4.0, which was
-  never true for this code.
+- `engines` now says Node.js >=22, the oldest release still supported upstream.
+  It previously claimed >=0.4.0, which was never true for this code. Node.js 18
+  and 20 reached end of life in April 2025 and April 2026 respectively; the
+  library itself has no syntax requiring Node.js 22, so older runtimes will
+  likely keep working, but they are no longer tested.
 - Package metadata: `license` replaces the deprecated `licenses` array, and the
   repository and bugs URLs point at the correct account.
 

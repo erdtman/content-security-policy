@@ -49,6 +49,6 @@
     "prepublishOnly": "npm run lint && npm run lint:types && npm test"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   }
 }
