@@ -133,8 +133,8 @@ describe('directive ordering', () => {
   it('emits every known directive in DIRECTIVES order', () => {
     // Generated from DIRECTIVES so the whole ordering table is pinned and a
     // directive added later is covered without touching this test.
-    const policy = Object.fromEntries(CSP.DIRECTIVES.map((name, i) => [name, 'v' + i]));
-    const expected = CSP.DIRECTIVES.map((name, i) => name + ' v' + i).join('; ');
+    const policy = Object.fromEntries(CSP.DIRECTIVES.map((name, i) => [name, `v${i}`]));
+    const expected = CSP.DIRECTIVES.map((name, i) => `${name} v${i}`).join('; ');
 
     assert.equal(headerValue(CSP.getCSP(policy)), expected);
   });

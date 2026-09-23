@@ -117,7 +117,7 @@ describe('declarations', () => {
       if (typeof value !== 'string') {
         continue;
       }
-      assert.ok(declared.has(name), name + ' has no literal type');
+      assert.ok(declared.has(name), `${name} has no literal type`);
       assert.equal(declared.get(name), value, name);
     }
   });
