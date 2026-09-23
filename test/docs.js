@@ -35,7 +35,7 @@ const CONTEXT = vm.createContext({ csp: CSP });
  * @returns its value
  */
 function evaluate (source) {
-  return vm.runInContext('(' + source + ')', CONTEXT);
+  return vm.runInContext(`(${source})`, CONTEXT);
 }
 
 describe('README', () => {
@@ -49,10 +49,10 @@ describe('README', () => {
       // one is the value kind, which is sometimes code too (`true`).
       .map(spans => spans.slice(-2));
 
-    assert.ok(rows.length >= 3, 'found ' + rows.length + ' documented value mappings, expected at least 3');
+    assert.ok(rows.length >= 3, `found ${rows.length} documented value mappings, expected at least 3`);
 
     for (const [fragment, expected] of rows) {
-      assert.equal(headerValue(CSP.getCSP(evaluate('{' + fragment + '}'))), expected, fragment);
+      assert.equal(headerValue(CSP.getCSP(evaluate(`{${fragment}}`))), expected, fragment);
     }
   });
 
@@ -66,7 +66,7 @@ describe('README', () => {
     assert.ok(examples.length >= 1, 'found no annotated getCSP examples in the README');
 
     for (const [, args, expectedName, expectedValue] of examples) {
-      const result = run(evaluate('csp.getCSP(' + args + ')'));
+      const result = run(evaluate(`csp.getCSP(${args})`));
 
       assert.equal(result.name, expectedName, args);
       assert.equal(result.value, expectedValue, args);
@@ -77,9 +77,9 @@ describe('README', () => {
     const section = README.slice(README.indexOf('### Constants'), README.indexOf('### STARTER_OPTIONS'));
     const named = [...section.matchAll(/`([A-Z][A-Z0-9_]+)`/g)].map(m => m[1]);
 
-    assert.ok(named.length >= 20, 'found ' + named.length + ' documented constants');
+    assert.ok(named.length >= 20, `found ${named.length} documented constants`);
     for (const name of named) {
-      assert.ok(Object.hasOwn(CSP, name), name + ' is documented but not exported');
+      assert.ok(Object.hasOwn(CSP, name), `${name} is documented but not exported`);
     }
   });
 
@@ -90,7 +90,7 @@ describe('README', () => {
       if (name === 'SRC_USAFE_INLINE') {
         continue;
       }
-      assert.ok(README.includes('`' + name + '`'), name + ' is exported but not documented');
+      assert.ok(README.includes(`\`${name}\``), `${name} is exported but not documented`);
     }
   });
 });

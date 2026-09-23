@@ -40,7 +40,7 @@ before(async () => {
   });
 
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  origin = 'http://127.0.0.1:' + server.address().port;
+  origin = `http://127.0.0.1:${server.address().port}`;
 });
 
 after(() => new Promise(resolve => server.close(resolve)));
@@ -53,7 +53,7 @@ after(() => new Promise(resolve => server.close(resolve)));
  */
 async function request (...middlewares) {
   stack = middlewares;
-  return fetch(origin + '/');
+  return fetch(`${origin}/`);
 }
 
 describe('over a real HTTP response', () => {
@@ -119,10 +119,10 @@ describe('over a real HTTP response', () => {
   });
 
   it('survives a long policy intact', async () => {
-    const sources = Array.from({ length: 200 }, (_, i) => 'https://cdn' + i + '.example');
+    const sources = Array.from({ length: 200 }, (_, i) => `https://cdn${i}.example`);
     const response = await request(CSP.getCSP({ 'script-src': sources }));
 
-    assert.equal(response.headers.get('content-security-policy'), 'script-src ' + sources.join(' '));
+    assert.equal(response.headers.get('content-security-policy'), `script-src ${sources.join(' ')}`);
   });
 });
 

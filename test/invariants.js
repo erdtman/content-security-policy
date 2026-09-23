@@ -72,7 +72,7 @@ describe('invariants over generated policies', () => {
 
     for (let i = 0; i < RUNS; i++) {
       const policy = randomPolicy(random);
-      const context = () => 'seed ' + SEED + ', run ' + i + ', policy ' + JSON.stringify(policy);
+      const context = () => `seed ${SEED}, run ${i}, policy ${JSON.stringify(policy)}`;
       const result = run(CSP.getCSP(policy));
       const value = result.value;
 
@@ -144,7 +144,7 @@ describe('invariants over generated policies', () => {
       assert.throws(
         () => CSP.getCSP(policy),
         { name: 'TypeError' },
-        'seed ' + SEED + ', run ' + i + ', policy ' + JSON.stringify(policy)
+        `seed ${SEED}, run ${i}, policy ${JSON.stringify(policy)}`
       );
     }
   });

@@ -56,7 +56,7 @@ after(() => rmSync(workspace, { recursive: true, force: true }));
 function filesUnder (dir, prefix = '') {
   return readdirSync(dir, { withFileTypes: true }).flatMap(entry => (
     entry.isDirectory()
-      ? filesUnder(path.join(dir, entry.name), prefix + entry.name + '/')
+      ? filesUnder(path.join(dir, entry.name), `${prefix}${entry.name}/`)
       : [prefix + entry.name]
   ));
 }
@@ -75,10 +75,10 @@ describe('the published tarball', () => {
 
   it('points main and types at files that are actually in it', () => {
     for (const field of ['main', 'types']) {
-      assert.ok(manifest[field], 'package.json has no ' + field);
+      assert.ok(manifest[field], `package.json has no ${field}`);
       assert.ok(
         filesUnder(installed).includes(manifest[field].replace(/^\.\//, '')),
-        field + ' points at ' + manifest[field] + ', which is not published'
+        `${field} points at ${manifest[field]}, which is not published`
       );
     }
   });
