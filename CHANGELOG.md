@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-25
+
+Breaking, in two ways that are both startup failures rather than silent
+changes: a policy that previously compiled to a malformed header now throws
+from `getCSP`, and `STARTER_OPTIONS` can no longer be mutated in place.
+
 ### Added
 
 - Directive names and values are validated against the CSP grammar when the
@@ -112,6 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 See the [commit history](https://github.com/erdtman/content-security-policy/commits/master).
 
-[Unreleased]: https://github.com/erdtman/content-security-policy/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/erdtman/content-security-policy/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/erdtman/content-security-policy/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/erdtman/content-security-policy/compare/v0.3.4...v0.4.0
 [0.3.4]: https://github.com/erdtman/content-security-policy/releases/tag/v0.3.4
