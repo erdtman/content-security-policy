@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support for the other popular Node HTTP frameworks. A policy compiles to
+  exactly one header, so each framework needs only its own way of setting one:
+  `getFastifyCSP` (an `onRequest` hook), `getKoaCSP`, `getHonoCSP`,
+  `getHapiCSP` (an `onPreResponse` extension, which also covers the responses
+  hapi generates itself) and `getHeadersCSP`, which applies a policy to any
+  Fetch `Headers` and so covers Next.js middleware, h3/Nitro, Workers, Deno,
+  Bun and Elysia. Each validates and compiles its policy once, at startup, like
+  `getCSP`, and clears both CSP headers before setting its own.
+- `getCSPHeader(policy)`, the frozen `{ name, value }` pair the adapters are
+  built on, for a framework none of them fits.
+- TypeScript declarations for all of the above. They are structural, so no
+  framework type package is needed.
+
+### Changed
+
+- `getCSP` is unchanged in behaviour; it is now a caller of `getCSPHeader`.
+
 ## [0.5.0] - 2026-09-25
 
 Breaking, in two ways that are both startup failures rather than silent
