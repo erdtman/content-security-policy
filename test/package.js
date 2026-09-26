@@ -127,13 +127,38 @@ describe('the installed package', () => {
       'style-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\'');
   });
 
+  it('applies a policy through a framework adapter too', () => {
+    // getCSP is the only export with a decade of usage behind it. The adapters
+    // are the ones that could plausibly be half-published or half-exported, and
+    // getHeadersCSP needs nothing installed to run for real.
+    const packed = require(require.resolve('content-security-policy', { paths: [workspace] }));
+    const headers = new Headers({ 'content-security-policy': 'default-src *' });
+
+    packed.getHeadersCSP({ 'default-src': packed.SRC_NONE, 'report-only': true })(headers);
+
+    assert.equal(headers.get('content-security-policy'), null);
+    assert.equal(headers.get('content-security-policy-report-only'), 'default-src \'none\'');
+
+    assert.deepEqual(
+      { ...packed.getCSPHeader({ 'default-src': packed.SRC_NONE }) },
+      { name: 'Content-Security-Policy', value: 'default-src \'none\'' }
+    );
+  });
+
   it('type-checks against a TypeScript consumer resolving it by name', () => {
     writeFileSync(path.join(workspace, 'consumer.ts'), [
-      'import { getCSP, Policy, CSPMiddleware, SRC_NONE, SRC_SELF, DIRECTIVES } from \'content-security-policy\';',
+      'import {',
+      '  getCSP, getCSPHeader, getKoaCSP, getHeadersCSP,',
+      '  Policy, CSPMiddleware, CSPHeader, KoaCSPMiddleware, HeadersCSP,',
+      '  SRC_NONE, SRC_SELF, DIRECTIVES',
+      '} from \'content-security-policy\';',
       'const policy: Policy = { \'default-src\': SRC_NONE, \'script-src\': [SRC_SELF] };',
       'const middleware: CSPMiddleware = getCSP(policy);',
+      'const header: CSPHeader = getCSPHeader(policy);',
+      'const koa: KoaCSPMiddleware = getKoaCSP(policy);',
+      'const applyCSP: HeadersCSP = getHeadersCSP(policy);',
       'const names: readonly string[] = DIRECTIVES;',
-      'export { middleware, names };',
+      'export { middleware, header, koa, applyCSP, names };',
       ''
     ].join('\n'));
 

@@ -1,6 +1,6 @@
 'use strict';
 
-const { readFileSync } = require('node:fs');
+const { readdirSync, readFileSync } = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const { describe, it } = require('node:test');
@@ -22,7 +22,15 @@ const { run, headerValue } = require('./helpers/response.js');
 
 const ROOT = path.join(__dirname, '..');
 const README = readFileSync(path.join(ROOT, 'README.md'), 'utf8');
-const EXAMPLE = readFileSync(path.join(ROOT, 'examples', 'express.js'), 'utf8');
+
+/** The factory each example is expected to demonstrate. */
+const EXAMPLES = {
+  'express.js': 'getCSP',
+  'fastify.js': 'getFastifyCSP',
+  'koa.js': 'getKoaCSP',
+  'hono.js': 'getHonoCSP',
+  'hapi.js': 'getHapiCSP'
+};
 
 // One shared context, so two evaluated snippets can be compared to each other
 // rather than only to a string.
@@ -95,32 +103,60 @@ describe('README', () => {
   });
 });
 
-describe('examples/express.js', () => {
-  /**
-   * @param source a file containing `const cspPolicy = { ... };`
-   * @returns the evaluated policy
-   */
-  function policyFrom (source) {
-    const match = source.match(/const cspPolicy = (\{[\s\S]*?\n\});/);
-    assert.ok(match, 'no cspPolicy literal found');
-    return evaluate(match[1]);
+/**
+ * @param source a file containing `const cspPolicy = { ... };`
+ * @returns the evaluated policy
+ */
+function policyFrom (source) {
+  const match = source.match(/const cspPolicy = (\{[\s\S]*?\n\});/);
+  assert.ok(match, 'no cspPolicy literal found');
+  return evaluate(match[1]);
+}
+
+describe('examples/', () => {
+  it('has one example per adapted framework, and no more', () => {
+    // A framework gains an adapter and keeps no example, or an example
+    // outlives the adapter it showed: either way this is the test that says so.
+    const present = readdirSync(path.join(ROOT, 'examples')).filter(name => name.endsWith('.js'));
+
+    assert.deepEqual(present.sort(), Object.keys(EXAMPLES).sort());
+  });
+
+  for (const [file, factory] of Object.entries(EXAMPLES)) {
+    describe(`examples/${file}`, () => {
+      const source = readFileSync(path.join(ROOT, 'examples', file), 'utf8');
+
+      it('uses a policy the library accepts', () => {
+        const policy = policyFrom(source);
+
+        assert.doesNotThrow(() => CSP[factory](policy));
+        assert.equal(
+          headerValue(CSP.getCSP(policy)),
+          'default-src \'none\'; script-src \'self\' data:; report-uri /reporting'
+        );
+      });
+
+      it('has not drifted from the README usage section', () => {
+        assert.deepEqual(policyFrom(source), policyFrom(README));
+      });
+
+      it('requires the package by name the way a reader would', () => {
+        assert.match(source, /require\('\.\.'\)/);
+      });
+
+      it(`shows both policies through ${factory}`, () => {
+        // Global and local: the precedence rule is the thing each example is
+        // really documenting, and it takes two policies to show it.
+        const calls = [...source.matchAll(/csp\.(\w+)\(/g)].map(match => match[1]);
+
+        assert.deepEqual(calls, [factory, factory]);
+      });
+
+      it('only names exports the library actually has', () => {
+        for (const [, name] of source.matchAll(/csp\.(\w+)/g)) {
+          assert.ok(Object.hasOwn(CSP, name), `csp.${name} is used but not exported`);
+        }
+      });
+    });
   }
-
-  it('uses a policy the library accepts', () => {
-    const policy = policyFrom(EXAMPLE);
-
-    assert.doesNotThrow(() => CSP.getCSP(policy));
-    assert.equal(
-      headerValue(CSP.getCSP(policy)),
-      'default-src \'none\'; script-src \'self\' data:; report-uri /reporting'
-    );
-  });
-
-  it('has not drifted from the README usage section', () => {
-    assert.deepEqual(policyFrom(EXAMPLE), policyFrom(README));
-  });
-
-  it('requires the package by name the way a reader would', () => {
-    assert.match(EXAMPLE, /require\('\.\.'\)/);
-  });
 });
