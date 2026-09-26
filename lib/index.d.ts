@@ -2,6 +2,10 @@
  * Middleware to add a Content-Security-Policy header.
  *
  * Policy reference: https://www.w3.org/TR/CSP3/
+ *
+ * The framework types here are structural: they describe the little this
+ * library needs of a response object, so no framework type package has to be
+ * installed for the declarations to resolve.
  */
 
 /**
@@ -60,6 +64,14 @@ export type Policy = {
   [directive: string]: DirectiveValue;
 };
 
+/** The single header a policy compiles to. */
+export interface CSPHeader {
+  /** `Content-Security-Policy`, or `Content-Security-Policy-Report-Only`. */
+  readonly name: string;
+  /** The serialised policy. Empty for an empty policy. */
+  readonly value: string;
+}
+
 /** Minimal shape of the response object the middleware needs. */
 export interface CSPResponse {
   setHeader (name: string, value: string): unknown;
@@ -73,8 +85,100 @@ export type CSPMiddleware = (
   next: () => void
 ) => void;
 
+/** Minimal shape of the Fastify reply the hook needs. */
+export interface FastifyReplyLike {
+  header (name: string, value: string): unknown;
+  removeHeader (name: string): unknown;
+}
+
+/** A Fastify onRequest hook. */
+export type FastifyCSPHook = (
+  request: unknown,
+  reply: FastifyReplyLike,
+  done: () => void
+) => void;
+
+/** Minimal shape of the Koa context the middleware needs. */
+export interface KoaContextLike {
+  set (field: string, value: string): unknown;
+  remove (field: string): unknown;
+}
+
+/** A Koa middleware function. */
+export type KoaCSPMiddleware = (
+  ctx: KoaContextLike,
+  next: () => Promise<void>
+) => Promise<void>;
+
+/** Minimal shape of the Hono context the middleware needs. */
+export interface HonoContextLike {
+  header (name: string, value: string | undefined): unknown;
+}
+
+/** A Hono middleware function. */
+export type HonoCSPMiddleware = (
+  c: HonoContextLike,
+  next: () => Promise<void>
+) => Promise<void>;
+
 /**
- * Build middleware that sets a Content-Security-Policy header.
+ * A hapi headers object, keyed by header name. Values are `unknown` because
+ * hapi's own are: a Boom response may carry numbers and arrays alongside
+ * strings.
+ */
+export type HapiHeaders = Record<string, unknown>;
+
+/**
+ * Minimal shape of the hapi response the extension needs: a normal response,
+ * or a Boom error, which keeps its headers one level further in.
+ *
+ * The two are told apart by `output`, not by `isBoom`: Boom declares that as a
+ * plain boolean rather than the literal `true`, so it cannot discriminate.
+ */
+export type HapiResponseLike =
+  | { isBoom?: false | undefined, headers: HapiHeaders, output?: undefined }
+  | { isBoom: boolean, output: { headers: HapiHeaders } };
+
+/** Minimal shape of the hapi request the extension needs. */
+export interface HapiRequestLike {
+  response: HapiResponseLike;
+}
+
+/** Minimal shape of the hapi response toolkit the extension needs. */
+export interface HapiToolkitLike {
+  continue: symbol;
+}
+
+/** A hapi extension method, which returns the toolkit's `continue` symbol. */
+export type HapiCSPExtension = (
+  request: HapiRequestLike,
+  h: HapiToolkitLike
+) => symbol;
+
+/** Minimal shape of a Fetch Headers object. */
+export interface HeadersLike {
+  set (name: string, value: string): unknown;
+  delete (name: string): unknown;
+}
+
+/** A function that applies a compiled policy to a Headers object. */
+export type HeadersCSP = (headers: HeadersLike) => void;
+
+/**
+ * Compile a policy to the single header it is sent as.
+ *
+ * Every factory below is built from this. Use it directly to support a
+ * framework that has no factory here.
+ *
+ * @param options the policy
+ * @throws TypeError if options is not a policy object, or if a directive name
+ *   or value is not valid per the CSP grammar
+ */
+export function getCSPHeader (options?: Policy): CSPHeader;
+
+/**
+ * Build middleware that sets a Content-Security-Policy header, for connect,
+ * express and anything else taking a (req, res, next) middleware.
  *
  * The policy is compiled once, when the middleware is created. Directive names
  * and values are validated against the CSP grammar at that point, so a
@@ -85,6 +189,58 @@ export type CSPMiddleware = (
  *   or value is not valid per the CSP grammar
  */
 export function getCSP (options?: Policy): CSPMiddleware;
+
+/**
+ * Build a Fastify onRequest hook that sets a Content-Security-Policy header.
+ *
+ * Add it with `fastify.addHook('onRequest', hook)`, or to one route with
+ * `{ onRequest: hook }`.
+ *
+ * @param options the policy
+ * @throws TypeError if options is not a policy object, or if a directive name
+ *   or value is not valid per the CSP grammar
+ */
+export function getFastifyCSP (options?: Policy): FastifyCSPHook;
+
+/**
+ * Build Koa middleware that sets a Content-Security-Policy header.
+ *
+ * @param options the policy
+ * @throws TypeError if options is not a policy object, or if a directive name
+ *   or value is not valid per the CSP grammar
+ */
+export function getKoaCSP (options?: Policy): KoaCSPMiddleware;
+
+/**
+ * Build Hono middleware that sets a Content-Security-Policy header.
+ *
+ * @param options the policy
+ * @throws TypeError if options is not a policy object, or if a directive name
+ *   or value is not valid per the CSP grammar
+ */
+export function getHonoCSP (options?: Policy): HonoCSPMiddleware;
+
+/**
+ * Build a hapi onPreResponse extension that sets a Content-Security-Policy
+ * header, on error responses as well as normal ones.
+ *
+ * Register it with `server.ext('onPreResponse', ext)`.
+ *
+ * @param options the policy
+ * @throws TypeError if options is not a policy object, or if a directive name
+ *   or value is not valid per the CSP grammar
+ */
+export function getHapiCSP (options?: Policy): HapiCSPExtension;
+
+/**
+ * Build a function that sets a Content-Security-Policy header on a Fetch
+ * Headers object: Next.js middleware, h3 and Nitro, Workers, Deno, Bun, Elysia.
+ *
+ * @param options the policy
+ * @throws TypeError if options is not a policy object, or if a directive name
+ *   or value is not valid per the CSP grammar
+ */
+export function getHeadersCSP (options?: Policy): HeadersCSP;
 
 /** The known directive names, in emission order. */
 export const DIRECTIVES: readonly KnownDirective[];
