@@ -1,6 +1,6 @@
 {
   "name": "content-security-policy",
-  "description": "Middleware to add Content-Security-Policy header.",
+  "description": "Add a Content-Security-Policy header, on Express, Connect, Fastify, Koa, Hono, Hapi, or anything that can set a header.",
   "version": "0.5.0",
   "author": {
     "name": "Samuel Erdtman",
@@ -9,6 +9,11 @@
   "keywords": [
     "express",
     "connect",
+    "fastify",
+    "koa",
+    "hapi",
+    "hono",
+    "middleware",
     "content-security-policy",
     "security",
     "csp"
@@ -43,6 +48,7 @@
     "lint:types": "tsc --noEmit",
     "pretest": "npm run lint && npm run lint:types",
     "test": "node --test \"test/*.js\"",
+    "test:frameworks": "npm install --no-save --no-package-lock express fastify koa @hapi/hapi hono @hono/node-server @types/express @types/koa && tsc --project tsconfig.frameworks.json && node --test test/frameworks.js",
     "watch": "node --test --watch \"test/*.js\"",
     "coverage": "node --test --experimental-test-coverage --test-coverage-exclude=\"test/**\" --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 \"test/*.js\"",
     "mutation": "npx --yes -p @stryker-mutator/core@9 -p typescript@5 stryker run",
