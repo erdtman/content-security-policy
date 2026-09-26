@@ -5,7 +5,12 @@
 // that has quietly widened to `any` gets caught. Plain tsc, no type-test
 // dependency.
 import * as CSP from '../../lib/index.js';
-import { getCSP, Policy, CSPMiddleware, CSPResponse, DirectiveValue, KnownDirective } from '../../lib/index.js';
+import {
+  getCSP, Policy, CSPMiddleware, CSPResponse, DirectiveValue, KnownDirective,
+  CSPHeader, FastifyCSPHook, FastifyReplyLike, KoaCSPMiddleware, KoaContextLike,
+  HonoCSPMiddleware, HonoContextLike, HapiCSPExtension, HapiRequestLike, HapiToolkitLike,
+  HeadersCSP, HeadersLike
+} from '../../lib/index.js';
 
 // --- accepted ---------------------------------------------------------------
 
@@ -39,6 +44,36 @@ const response: CSPResponse = {
 for (const mw of [middleware, starter, empty, alsoDerived]) {
   mw(null, response, () => {});
 }
+
+// --- the framework adapters -------------------------------------------------
+
+const header: CSPHeader = CSP.getCSPHeader(policy);
+const headerName: string = header.name;
+const headerValue: string = header.value;
+
+const fastifyHook: FastifyCSPHook = CSP.getFastifyCSP(policy);
+const reply: FastifyReplyLike = { header: () => reply, removeHeader: () => reply };
+fastifyHook({}, reply, () => {});
+
+const koaMiddleware: KoaCSPMiddleware = CSP.getKoaCSP(policy);
+const ctx: KoaContextLike = { set: () => {}, remove: () => {} };
+const koaDone: Promise<void> = koaMiddleware(ctx, async () => {});
+
+const honoMiddleware: HonoCSPMiddleware = CSP.getHonoCSP(policy);
+const honoContext: HonoContextLike = { header: () => {} };
+const honoDone: Promise<void> = honoMiddleware(honoContext, async () => {});
+
+const hapiExtension: HapiCSPExtension = CSP.getHapiCSP(policy);
+const toolkit: HapiToolkitLike = { continue: Symbol('continue') };
+const hapiRequest: HapiRequestLike = { response: { headers: {} } };
+const boomRequest: HapiRequestLike = { response: { isBoom: true, output: { headers: {} } } };
+const continued: symbol = hapiExtension(hapiRequest, toolkit);
+hapiExtension(boomRequest, toolkit);
+
+const applyCSP: HeadersCSP = CSP.getHeadersCSP(policy);
+const fetchHeaders: HeadersLike = new Headers();
+applyCSP(fetchHeaders);
+applyCSP(new Response('ok').headers);
 
 const names: readonly string[] = CSP.DIRECTIVES;
 const known: KnownDirective = 'script-src';
@@ -82,4 +117,31 @@ CSP.STARTER_OPTIONS['script-src'] = CSP.SRC_UNSAFE_INLINE;
 // @ts-expect-error an unknown directive name is fine, but its value is still typed
 const badUnknown: Policy = { 'fenced-frame-src': 42 };
 
-export { policy, derived, names, known, value, first, badControl, badValue, badMember, badObject, badPolicy, badUnknown };
+// @ts-expect-error a compiled header is readonly: it is shared by every request
+CSP.getCSPHeader(policy).value = 'default-src *';
+
+// @ts-expect-error the reply must be able to remove headers as well as set them
+CSP.getFastifyCSP()({}, { header: () => {} }, () => {});
+
+// @ts-expect-error the hook signals completion through done(), which is required
+CSP.getFastifyCSP()({}, reply);
+
+// @ts-expect-error a Koa context removes headers with remove(), not removeHeader()
+CSP.getKoaCSP()({ set: () => {}, removeHeader: () => {} }, async () => {});
+
+// @ts-expect-error a Hono context sets headers with header(), not set()
+CSP.getHonoCSP()({ set: () => {} }, async () => {});
+
+// @ts-expect-error a hapi extension needs a response to put the header on
+CSP.getHapiCSP()({}, toolkit);
+
+// @ts-expect-error a Headers object is not a policy
+CSP.getHeadersCSP(new Headers());
+
+// @ts-expect-error every factory validates its policy the same way
+CSP.getKoaCSP('default-src');
+
+export {
+  policy, derived, names, known, value, first, header, headerName, headerValue, koaDone, honoDone,
+  continued, badControl, badValue, badMember, badObject, badPolicy, badUnknown
+};

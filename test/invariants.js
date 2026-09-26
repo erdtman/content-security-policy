@@ -5,6 +5,7 @@ const assert = require('node:assert/strict');
 
 const CSP = require('../lib/index.js');
 const { run } = require('./helpers/response.js');
+const { ADAPTERS, survivingHeader } = require('./helpers/frameworks.js');
 
 /**
  * Properties that must hold for every policy, checked against a few thousand
@@ -146,6 +147,28 @@ describe('invariants over generated policies', () => {
         { name: 'TypeError' },
         `seed ${SEED}, run ${i}, policy ${JSON.stringify(policy)}`
       );
+    }
+  });
+
+  it('sends the same header through every framework adapter', async () => {
+    // The adapters differ only in how a framework spells "set this header", so
+    // any policy that reaches one must reach all of them unchanged. Fewer runs
+    // than above: the compiler they share is what the volume is for.
+    const random = mulberry32(SEED);
+
+    for (let i = 0; i < 200; i++) {
+      const policy = randomPolicy(random);
+      const expected = CSP.getCSPHeader(policy);
+
+      for (const adapter of ADAPTERS) {
+        const header = await survivingHeader(adapter, [adapter.factory(policy)]);
+
+        assert.deepEqual(
+          header,
+          { name: expected.name.toLowerCase(), value: expected.value },
+          `${adapter.label}, seed ${SEED}, run ${i}, policy ${JSON.stringify(policy)}`
+        );
+      }
     }
   });
 

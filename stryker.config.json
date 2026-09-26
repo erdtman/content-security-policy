@@ -1,7 +1,7 @@
 {
   "testRunner": "command",
   "commandRunner": {
-    "command": "node --test test/index.js test/exports.js test/http.js test/invariants.js test/docs.js"
+    "command": "node --test test/index.js test/exports.js test/http.js test/adapters.js test/invariants.js test/docs.js"
   },
   "mutate": ["lib/index.js"],
   "coverageAnalysis": "off",

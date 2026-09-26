@@ -9,5 +9,8 @@
     "allowJs": false,
     "skipLibCheck": false
   },
-  "include": ["lib/index.d.ts", "test/types"]
+  "include": ["lib/index.d.ts", "test/types"],
+  // Needs the frameworks installed; tsconfig.frameworks.json checks it under
+  // `npm run test:frameworks`.
+  "exclude": ["test/types/frameworks.ts"]
 }

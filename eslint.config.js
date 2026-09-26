@@ -26,7 +26,9 @@ module.exports = [
       globals: {
         process: 'readonly',
         fetch: 'readonly',
-        structuredClone: 'readonly'
+        structuredClone: 'readonly',
+        Headers: 'readonly',
+        Response: 'readonly'
       }
     }
   }

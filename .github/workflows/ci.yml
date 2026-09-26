@@ -28,6 +28,20 @@ jobs:
       - run: npm run lint:types
       - run: npm run coverage
 
+  frameworks:
+    name: Real frameworks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      # Installs express, fastify, koa, hapi and hono, so a breaking change in
+      # any of them is caught here rather than by a user.
+      - run: npm run test:frameworks
+
   audit:
     runs-on: ubuntu-latest
     steps:
