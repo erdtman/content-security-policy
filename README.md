@@ -70,7 +70,10 @@ Runnable versions of each of these are in [`examples/`](examples).
 ### Fastify
 
 ```js
+const csp = require('content-security-policy');
 const fastify = require('fastify')();
+
+const cspPolicy = { 'default-src': csp.SRC_NONE, 'script-src': csp.SRC_SELF };
 
 fastify.addHook('onRequest', csp.getFastifyCSP(csp.STARTER_OPTIONS));
 
@@ -81,15 +84,28 @@ fastify.get('/local', { onRequest: csp.getFastifyCSP(cspPolicy) }, async () => '
 ### Koa
 
 ```js
+const csp = require('content-security-policy');
+const Koa = require('koa');
 const app = new Koa();
 
+const cspPolicy = { 'default-src': csp.SRC_NONE, 'script-src': csp.SRC_SELF };
+const localCSP = csp.getKoaCSP(cspPolicy);
+
 app.use(csp.getKoaCSP(csp.STARTER_OPTIONS));
+
+// Koa has no router of its own, so a route local policy is dispatched by path.
+// Whichever way it is reached, the more specific middleware is the inner one.
+app.use((ctx, next) => (ctx.path === '/local' ? localCSP(ctx, next) : next()));
 ```
 
 ### Hono
 
 ```js
+const csp = require('content-security-policy');
+const { Hono } = require('hono');
 const app = new Hono();
+
+const cspPolicy = { 'default-src': csp.SRC_NONE, 'script-src': csp.SRC_SELF };
 
 app.use('*', csp.getHonoCSP(csp.STARTER_OPTIONS));
 app.get('/local', csp.getHonoCSP(cspPolicy), c => c.text('ok'));
@@ -102,6 +118,12 @@ overwrite the route-local one.
 ### Hapi
 
 ```js
+const csp = require('content-security-policy');
+const Hapi = require('@hapi/hapi');
+const server = Hapi.server({ port: 3000 });
+
+const cspPolicy = { 'default-src': csp.SRC_NONE, 'script-src': csp.SRC_SELF };
+
 server.ext('onPreResponse', csp.getHapiCSP(csp.STARTER_OPTIONS));
 
 server.route({
@@ -121,6 +143,10 @@ Anywhere responses carry a standard `Headers` — Next.js middleware, h3 and
 Nitro, Cloudflare Workers, Deno, Bun, Elysia:
 
 ```js
+import csp from 'content-security-policy';
+import { NextResponse } from 'next/server';
+
+const cspPolicy = { 'default-src': csp.SRC_NONE, 'script-src': csp.SRC_SELF };
 const applyCSP = csp.getHeadersCSP(cspPolicy);
 
 export function middleware () {
@@ -136,8 +162,12 @@ export function middleware () {
 framework with none of these shapes is still three lines:
 
 ```js
+const csp = require('content-security-policy');
+
+const cspPolicy = { 'default-src': csp.SRC_NONE, 'script-src': csp.SRC_SELF };
+
 const { name, value } = csp.getCSPHeader(cspPolicy);
-// { name: 'Content-Security-Policy', value: "default-src 'none'; ..." }
+// { name: 'Content-Security-Policy', value: "default-src 'none'; script-src 'self'" }
 ```
 
 ### Responses the framework generates

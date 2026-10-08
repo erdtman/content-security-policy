@@ -81,6 +81,50 @@ describe('README', () => {
     }
   });
 
+  describe('each framework snippet stands on its own', () => {
+    // A reader lands on one of these from the table above and copies it, so a
+    // snippet that borrows `csp` or a policy from the usage section further up
+    // is broken on arrival. These tests fail rather than let that come back.
+    const section = README.slice(README.indexOf('## Frameworks'), README.indexOf('## Writing a policy'));
+    const snippets = [...section.matchAll(/### (.+)\n[\s\S]*?```js\n([\s\S]*?)```/g)];
+
+    /** The names the snippets make up for their own values, as opposed to the framework's. */
+    const LOCALS = new Set(['csp', 'cspPolicy', 'localCSP', 'applyCSP', 'app', 'server', 'fastify']);
+
+    it('attributes every snippet in the section to a heading', () => {
+      // Not one per heading: the last section is prose with no snippet at all.
+      assert.equal(snippets.length, [...section.matchAll(/```js\n/g)].length);
+    });
+
+    for (const [, label, source] of snippets) {
+      // Strings and comments are prose, not uses: 'next/server' is not the
+      // snippet referring to a `server` it never declared.
+      const code = source.replace(/\/\/.*/g, '').replace(/'[^']*'/g, "''");
+
+      it(`${label} brings in the package itself`, () => {
+        assert.match(
+          source,
+          /require\('content-security-policy'\)|import csp from 'content-security-policy'/
+        );
+      });
+
+      it(`${label} declares every name it uses`, () => {
+        const declared = new Set([
+          ...[...code.matchAll(/(?:const|let|var|function)\s+([A-Za-z_$][\w$]*)/g)].map(m => m[1]),
+          ...[...source.matchAll(/import\s+([A-Za-z_$][\w$]*)\s+from/g)].map(m => m[1]),
+          ...[...code.matchAll(/(?:const|let|var|import)\s*\{([^}]*)\}/g)]
+            .flatMap(m => m[1].split(',').map(name => name.trim().split(':').pop().trim()))
+        ]);
+
+        for (const [name] of code.matchAll(/[A-Za-z_$][\w$]*/g)) {
+          if (LOCALS.has(name)) {
+            assert.ok(declared.has(name), `${label} uses ${name} without declaring it`);
+          }
+        }
+      });
+    }
+  });
+
   it('only claims constants that exist', () => {
     const section = README.slice(README.indexOf('### Constants'), README.indexOf('### STARTER_OPTIONS'));
     const named = [...section.matchAll(/`([A-Z][A-Z0-9_]+)`/g)].map(m => m[1]);
