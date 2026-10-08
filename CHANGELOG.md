@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-08
+
+Nothing in this release breaks code written against 0.5.0. The version marks
+the API as stable: `getCSP`, the adapters, `getCSPHeader`, the constants and
+`STARTER_OPTIONS` are what this library offers, and anything that breaks them
+from here needs a 2.0.0.
+
 ### Added
 
 - Support for the other popular Node HTTP frameworks. A policy compiles to
@@ -25,6 +32,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `getCSP` is unchanged in behaviour; it is now a caller of `getCSPHeader`.
+
+### Fixed
+
+- The framework snippets in the README each borrowed `csp` and a policy from
+  the usage section above them, so a snippet copied on its own did not run.
 
 ## [0.5.0] - 2026-09-25
 
@@ -137,7 +149,8 @@ from `getCSP`, and `STARTER_OPTIONS` can no longer be mutated in place.
 
 See the [commit history](https://github.com/erdtman/content-security-policy/commits/master).
 
-[Unreleased]: https://github.com/erdtman/content-security-policy/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/erdtman/content-security-policy/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/erdtman/content-security-policy/compare/v0.5.0...v1.0.0
 [0.5.0]: https://github.com/erdtman/content-security-policy/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/erdtman/content-security-policy/compare/v0.3.4...v0.4.0
 [0.3.4]: https://github.com/erdtman/content-security-policy/releases/tag/v0.3.4
